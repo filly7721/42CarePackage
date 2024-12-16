@@ -1,11 +1,11 @@
 all: cclean valgrind
 
 cclean:
-	@echo "Installing CClean"
-	@sh ./Cleaner_42/CleanerInstaller.sh
+	@echo "Installing CClean..."
+	@cd ./Cleaner_42; yes | sh ./CleanerInstaller.sh 1>/dev/null && echo "Installed Successfully."
 
 valgrind:
-	@echo "Installing Valgrind"
-	@sh ./42-ValgrindContainer/install
+	@echo "Installing Valgrind..."
+	@cd 42-ValgrindContainer; yes | sh ./install 1>/dev/null; sh ./build 1>/dev/null && echo "Installed Successfully."
 
 .PHONY:	all cclean valgrind
