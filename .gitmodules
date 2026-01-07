@@ -1,6 +1,0 @@
-[submodule "42-ValgrindContainer"]
-	path = 42-ValgrindContainer
-	url = https://github.com/opsec-infosec/42-ValgrindContainer
-[submodule "Cleaner_42"]
-	path = Cleaner_42
-	url = https://github.com/ombhd/Cleaner_42.git
