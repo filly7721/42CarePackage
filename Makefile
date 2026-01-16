@@ -2,7 +2,18 @@ define check_binary
   zsh -c 'source ~/.zshrc || true; which $(1) ' 1>/dev/null 2>&1
 endef
 
-all: path kitty nvim
+foundPath = ${shell zsh -c 'source ~/.zshrc && echo :$$PATH:'}
+localPath != echo :$$HOME/.local/bin:
+
+all: path kitty nvim lazyvim
+
+path:
+	@if [ "${findstring ${localPath},${foundPath}}" != "" ]; then\
+		echo "Path is already updated";\
+	else\
+		echo "Updating Path...";\
+		echo 
+	fi
 
 kitty:
 	@if $(call check_binary,kitty); then \
@@ -40,7 +51,8 @@ nvim:
 
 lazyvim:
 	@echo "Backing up old nvim config"
-	@mv ~/.config/nvim{,.bak}
+	@rm -rf ~/.config/nvim.bak
+	@mv -f ~/.config/nvim ~/.config/nvim.bak
 	@echo "Downloading LazyVim"
 	@git clone https://github.com/LazyVim/starter ~/.config/nvim
 	@rm -rf ~/.config/nvim/.git
