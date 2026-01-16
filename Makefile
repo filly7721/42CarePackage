@@ -10,9 +10,9 @@ all: path kitty nvim lazyvim
 path:
 	@if [ "${findstring ${localPath},${foundPath}}" != "" ]; then\
 		echo "Path is already updated";\
-	else\
-		echo "Updating Path...";\
-		echo 
+	else \
+		echo "Updating Path..."; \
+		echo "PATH=$$PATH:$$HOME/.local/bin " >> ~/.zshrc;\
 	fi
 
 kitty:
@@ -56,7 +56,6 @@ lazyvim:
 	@echo "Downloading LazyVim"
 	@git clone https://github.com/LazyVim/starter ~/.config/nvim
 	@rm -rf ~/.config/nvim/.git
-
 
 .PHONY: nvim all path kitty
 
