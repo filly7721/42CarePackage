@@ -12,14 +12,18 @@ isKittyInstalled = ${call check_binary, kitty}
 isNvimInstalled = ${call check_binary, nvim}
 isNvimAliased = ${shell env -i zsh -c 'source ~/.zshrc; alias vim | (grep -q nvim && echo true || echo false)' 2>/dev/null}
 isJetBrainsAdded = ${shell ls ~/.local/share/fonts | (grep "JetBrainsMono" 1>/dev/null && echo true) || echo false}
-all: ohmyzsh path kitty nvim lazyvim nerdfont
+all: pre ohmyzsh path kitty nvim lazyvim nerdfont
 
+pre:
+	@mkdir -p ~/.local/share/applications
+	@mkdir -p ~/.local/bin
+	@mkdir -p ~/.local/share/fonts
 ohmyzsh:
 ifeq (${isOmzInstalled}, true)
 	@echo "oh-my-zsh is already installed";
 else
 	@echo "Installing oh-my-zsh"
-	@curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash -s 1>/dev/null -- --unattended
+	@curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash -s 1>/dev/null 2>&1 -- --unattended
 	@echo "Installing Kitty Plugin"
 	@sed -i 's|^plugins=(git)$$|plugins=(git kitty)|g' ~/.zshrc
 endif
@@ -39,7 +43,7 @@ ifeq (${isKittyInstalled}, true)
 	@echo "Kitty is already installed"
 else
 	@echo "Installing Kitty";
-	@curl -L "https://sw.kovidgoyal.net/kitty/installer.sh" | sh /dev/stdin launch=n;
+	@curl -fsSL "https://sw.kovidgoyal.net/kitty/installer.sh" | sh /dev/stdin launch=n 1>/dev/null 2>&1;
 	@echo "Adding Kitty to Path";
 	@ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/;
 	@cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/;
@@ -49,7 +53,7 @@ else
 	@echo 'kitty.desktop' > ~/.config/xdg-terminals.list;
 	@echo "adding default Kitty Config"
 	@mkdir -p ~/.config/kitty
-	@mv ./kitty/* ~/.config/kitty
+	@cp ./kitty/* ~/.config/kitty
 endif
 
 nvim:
@@ -57,7 +61,7 @@ ifeq (${isNvimInstalled}, true)
 	@echo "NeoVim is already installed"
 else
 	@echo "Downloading NeoVim";
-	@curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz";
+	@curl -fsSLO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz" 1>/dev/null 2>&1;
 	@echo "Installing NeoVim";
 	@rm -rf nvim-linux-x86_64;
 	@tar -xzf "nvim-linux-x86_64.tar.gz";
@@ -83,13 +87,13 @@ ifeq (${isJetBrainsAdded}, true)
 	@echo "JetBrainsMono Already Added";
 else 
 	@echo "Downloading JetBrainsMono"
-	@curl -LO "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip"
-	@unzip -d "JetBrainsMono" JetBrainsMono.zip
+	@curl -fsSLO "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip" 1>/dev/null 2>&1
+	@unzip -d "JetBrainsMono" JetBrainsMono.zip 1>/dev/null 2>&1
 	@rm -f JetBrainsMono.zip
 	@mkdir -p ~/.local/share/fonts
 	@mv JetBrainsMono/* ~/.local/share/fonts
 	@rm -rf JetBrainsMono
-	@fc-cache -fv;
+	@fc-cache -fv 1>/dev/null;
 endif
 
 .PHONY: all ohmyzsh path kitty nvim lazyvim nerdfont
